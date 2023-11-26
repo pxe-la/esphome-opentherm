@@ -54,6 +54,20 @@
 #define OPENTHERM_INPUT_SENSOR_MESSAGE_HANDLERS(MESSAGE, ENTITY, entity_sep, postscript, msg_sep)
 #endif
 
+class ImmergasOpenTherm : public OpenTherm {
+public:
+    ImmergasOpenTherm(int inPin = 4, int outPin = 5, bool isSlave = false) : OpenTherm(inPin, outPin, isSlave) {
+
+    }
+
+    unsigned long buildSetBoilerStatusRequest(bool enableCentralHeating, bool enableHotWater, bool enableCooling, bool enableOutsideTemperatureCompensation, bool enableCentralHeating2) {
+        unsigned int data = enableCentralHeating | (enableHotWater << 1) | (enableCooling << 2) | (enableOutsideTemperatureCompensation << 3) | (enableCentralHeating2 << 4);		
+        data <<= 8;
+        data |= 0xCA;
+        return buildRequest(OpenThermMessageType::READ_DATA, OpenThermMessageID::Status, data);
+    }
+};
+
 namespace esphome {
 namespace opentherm {
 
@@ -63,7 +77,7 @@ protected:
     // Communication pins for the OpenTherm interface
     int in_pin, out_pin;
     // The OpenTherm interface from @ihormelnyk's library
-    OpenTherm* ot;
+    ImmergasOpenTherm* ot;
 
     // Use macros to create fields for every entity specified in the ESPHome configuration
     #define OPENTHERM_DECLARE_SENSOR(entity) sensor::Sensor* entity;

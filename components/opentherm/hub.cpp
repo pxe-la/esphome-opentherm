@@ -222,7 +222,7 @@ void OpenthermHub::process_response(unsigned long response, OpenThermResponseSta
 
 void OpenthermHub::setup() {
     ESP_LOGD(TAG, "Setting up OpenTherm component");
-    this->ot = new OpenTherm(this->in_pin, this->out_pin, false);
+    this->ot = new ImmergasOpenTherm(this->in_pin, this->out_pin, false);
     this->ot->begin(this->handle_interrupt_callback, this->process_response_callback);
 
     // Ensure that there is at least one request, as we are required to
